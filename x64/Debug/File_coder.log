@@ -1,0 +1,5 @@
+﻿  Source.cpp
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(54,21): warning C4244: =: преобразование "LRESULT" в "int", возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(265,12): warning C4930: CBlowFish blowFish(void): функция с прототипом не вызвана (предполагалось определение переменной?)
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(118): warning C4715: SoftMainProcedure: значение возвращается не при всех путях выполнения
+  File_coder.vcxproj -> E:\Projects\Freelancer\PCBTester\Encryptor\x64\Debug\File_coder.exe

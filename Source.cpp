@@ -1,9 +1,9 @@
 #include <Windows.h>
-#include <windowsx.h>
 #include <thread>
 #include "SoftDefinitions.h"
 #include <string>
 #include <CommCtrl.h>
+#include <thread>
 
 
 
@@ -63,8 +63,10 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 		case OnExitSoftwareClicked:
 			PostQuitMessage(0);
 			break;
+		case onEncryptTypeClicked:
+			_b_type = false;
 		case OnDecryptTypeClicked:
-			
+			_b_type = true;
 			break;
 		case ondocxSelect:
 			_b_docx_selected = SetDocx();
@@ -90,6 +92,17 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 			refreshDiskLabels();
 			break;
 
+		case onSingleProcessClicked:
+			singleFileProcess();
+			break;
+		case onDriveProcessClicked:
+			if (searchMaskQuantities == 0) {
+				MessageBoxA(hWnd, "No search mask selected", "File Coder", MB_OK);
+			}
+			else {
+				driveProcess();
+			}
+			break;
 		default: break;
 		}
 		break;
@@ -164,7 +177,7 @@ void DrawDriveList(HWND hWnd) {
 	passLine1 = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 250, 330, 300, 20, hWnd, NULL, NULL, NULL);
 	CreateWindow(L"static", L"Confirm Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 355, 150, 20, hWnd, NULL, NULL, NULL);
 	passConfLine1 = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 250, 355, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 330, 100, 50, hWnd, NULL, NULL, NULL);
+	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 330, 100, 50, hWnd, (HMENU)onDriveProcessClicked, NULL, NULL);
 }
 
 void SearchFiles()
@@ -190,14 +203,46 @@ void refreshDiskLabels()
 	SendMessage(GroupBox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
 }
 
+void singleFileProcess()
+{
+	
+}
+
+void driveProcess()
+{
+	ReadThread = CreateThread(NULL, 0, SearchEngine, 0, 0, 0);
+}
+
+void AddMask(std::string mask)
+{
+	searchMaskQuantities++;
+	if (searchMaskQuantities > 5) {
+		searchMaskQuantities = 5;
+	}
+	try {
+
+	}
+
+}
+
+void RemoveMask(std::string mask)
+{
+	searchMaskQuantities--;
+	if (searchMaskQuantities <0) {
+		searchMaskQuantities = 0;
+	}
+}
+
 
 bool SetDocx()
 {
 	if (_b_docx_selected) {
+		RemoveMask(docxMask);
 		return false;
 	}
 	else
 	{
+		AddMask(docxMask);
 		return true;
 	}
 	
