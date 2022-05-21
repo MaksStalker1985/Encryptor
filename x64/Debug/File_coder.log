@@ -1,29 +1,28 @@
 ﻿  Source.cpp
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(51,21): warning C4244: =: преобразование "LRESULT" в "volatile int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(103,17): warning C4101: e: неиспользованная локальная переменная
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(305,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(294,8): warning C4101: ByteRet: неиспользованная локальная переменная
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(331,33): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(336,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(323,8): warning C4101: ByteRet: неиспользованная локальная переменная
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(80,21): warning C4244: =: преобразование "LRESULT" в "volatile int", возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(185,17): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(399,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(388,8): warning C4101: ByteRet: неиспользованная локальная переменная
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(425,33): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(430,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(417,8): warning C4101: ByteRet: неиспользованная локальная переменная
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\include\xstring(2603,27): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
           with
           [
               _Elem=char
           ]
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(215): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(289): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(215): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(289): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(131): warning C4715: SoftMainProcedure: значение возвращается не при всех путях выполнения
-  File_coder.vcxproj -> E:\Projects\Freelancer\PCBTester\Encryptor\x64\Debug\File_coder.exe
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(214): warning C4715: SoftMainProcedure: значение возвращается не при всех путях выполнения

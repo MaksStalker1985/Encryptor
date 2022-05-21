@@ -1,27 +1,7 @@
-﻿  Source.cpp
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(65,21): warning C4244: =: преобразование "LRESULT" в "volatile int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(166,17): warning C4101: e: неиспользованная локальная переменная
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(368,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(357,8): warning C4101: ByteRet: неиспользованная локальная переменная
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(394,33): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(399,23): warning C4244: =: преобразование "std::streamoff" в "int", возможна потеря данных
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(386,8): warning C4101: ByteRet: неиспользованная локальная переменная
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\include\xstring(2603,27): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
-          with
-          [
-              _Elem=char
-          ]
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(278): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
-          with
-          [
-              _Elem=wchar_t,
-              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
-              _Alloc=std::allocator<char>
-          ]
-E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(278): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
-          with
-          [
-              _Elem=wchar_t,
-              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
-              _Alloc=std::allocator<char>
-          ]
+﻿  Создание кода
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(214): warning C4715: SoftMainProcedure: значение возвращается не при всех путях выполнения
+  2 of 255 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  File_coder.vcxproj -> E:\Projects\Freelancer\PCBTester\Encryptor\x64\Release\File_coder.exe

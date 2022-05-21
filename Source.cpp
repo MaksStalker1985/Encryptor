@@ -6,7 +6,6 @@
 #include <thread>
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInt, LPSTR args, int nCmdShow) {
-	initFileHandler();
 	WNDCLASS SoftwareMainClass = MainWindowClass((HBRUSH)COLOR_WINDOW,
 														LoadCursor(NULL,IDC_ARROW),
 														hInst,
@@ -52,9 +51,25 @@ DWORD WINAPI DecodeThread(LPVOID lpParameter)
 	ExitThread(0);
 }
 
-void initFileHandler()
+void setFileName(wchar_t* p)
 {
+	for (int i = 0; i < MAX_PATH; i++) {
+		_c_txt[i] = p[i];
+	}
+}
 
+void initFileHandler(HWND hWnd)
+{
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.hwndOwner = hWnd;
+	ofn.lStructSize = sizeof(OPENFILENAME);
+	ofn.lpstrFile = filename;
+	ofn.nMaxFile = sizeof(filename);
+	ofn.lpstrFilter = L"Encrypted file\0*.encr\0TXT file\0*.txt\0Microsoft DOCX\0*.docx\0Microsoft XLSX\0*.xlsx\0DWG file\0*.dwg\0PST file\0*.pst\0All files\0*.*\0\0";
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 }
 
 LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam) {
@@ -80,6 +95,10 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 		case OnDecryptTypeClicked:
 			_b_type = false;
 			break;
+		case onSelectClicked:
+			LoadFile(hWnd);
+			break;
+			
 		case ondocxSelect:
 			_b_docx_selected = SetDocx();
 			break;
@@ -181,6 +200,7 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 
 	case WM_CREATE:
 			MainWindowAddMenus(hWnd);
+			initFileHandler(hWnd);
 			MainWidowDrawWidgets(hWnd);
 			DrawSingleFileList(hWnd);
 			DrawDriveList(hWnd);
@@ -193,16 +213,15 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 	}
 }
 
+
+
 void MainWindowAddMenus(HWND hWnd) {
 	HMENU RootMenu = CreateMenu();
 	HMENU SubMenu = CreateMenu();
 	HMENU HelpSubMenu = CreateMenu();
 
 	AppendMenuW(HelpSubMenu, MF_STRING, OnHelpMenuClicked, L"About...");
-
-	AppendMenuW(SubMenu, MF_STRING, OnSettingsClicked, L"Settings...");
 	AppendMenuW(SubMenu, MF_STRING, OnExitSoftwareClicked, L"Close Program");
-	
 	AppendMenuW(RootMenu, MF_POPUP, (UINT_PTR)SubMenu, L"File");
 	AppendMenuW(RootMenu, MF_POPUP, (UINT_PTR)HelpSubMenu, L"Help");
 	SetMenu(hWnd, RootMenu);
@@ -220,35 +239,27 @@ void MainWidowDrawWidgets(HWND hWnd) {
 void DrawSingleFileList(HWND hWnd) {
 	
 	CreateWindowEx(WS_EX_WINDOWEDGE, L"BUTTON", L"Single File", WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 10, 75,
-		765, 150, hWnd, NULL,
+		765, 50, hWnd, NULL,
 		NULL, NULL);
 	CreateWindow(L"static", L"File: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 90, 50, 20, hWnd, NULL, NULL, NULL);
 	hLineEdit = CreateWindow(L"edit", L"File name", WS_VISIBLE|WS_BORDER | WS_CHILD, 150, 90, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"button", L"Select file", WS_VISIBLE | WS_CHILD, 500, 90, 100, 20,hWnd,NULL,NULL,NULL);
-	CreateWindow(L"static", L"Enter Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 130, 150, 20, hWnd, NULL, NULL, NULL);
-	passLine = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD |WS_BORDER|ES_PASSWORD, 250, 130, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"static", L"Confirm Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 155, 150, 20, hWnd, NULL, NULL, NULL);
-	passConfLine = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD|WS_BORDER | ES_PASSWORD, 250, 155, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 130, 100, 50, hWnd,(HMENU)onSingleProcessClicked, NULL, NULL);
+	CreateWindow(L"button", L"Select file", WS_VISIBLE | WS_CHILD, 500, 90, 100, 20,hWnd,(HMENU)onSelectClicked, NULL, NULL);
+	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 620, 90, 100, 20, hWnd,(HMENU)onSingleProcessClicked, NULL, NULL);
 }
 
 void DrawDriveList(HWND hWnd) {
-	CreateWindowEx(WS_EX_WINDOWEDGE, L"BUTTON", L"Whole drive", WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 10, 230,
-		765, 180, hWnd, NULL,
+	CreateWindowEx(WS_EX_WINDOWEDGE, L"BUTTON", L"Whole drive", WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 10, 145,
+		765, 140, hWnd, NULL,
 		NULL, NULL);
-	CreateWindow(L"static", L"Drive Letter: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 250, 50, 20, hWnd, NULL, NULL, NULL);
-	GroupBox = CreateWindow(WC_COMBOBOX, L"", WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | CBS_DROPDOWN | CBS_HASSTRINGS | WS_VSCROLL, 150, 250, 50, 200, hWnd,NULL,NULL, NULL);
-	CreateWindow(L"Button", L"Refresh", WS_VISIBLE | WS_CHILD, 220, 250, 100, 20,hWnd,(HMENU)onRefreshClicked, NULL, NULL);
-	CreateWindow(L"button", L"Select all docx files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 250, 150, 20, hWnd, (HMENU)ondocxSelect, NULL, NULL);
-	CreateWindow(L"button", L"Select all xlsx files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 275, 150, 20, hWnd, (HMENU)onxlsxSelect, NULL, NULL);
-	CreateWindow(L"button", L"Select all txt files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 500, 250, 150, 20, hWnd, (HMENU)ontxtSelect, NULL, NULL);
-	CreateWindow(L"button", L"Select all pst files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 500, 275, 150, 20, hWnd, (HMENU)onpstSelect, NULL, NULL);
-	CreateWindow(L"button", L"Select all dwg files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 300, 150, 20, hWnd, (HMENU)ondwgSelect, NULL, NULL);
-	CreateWindow(L"static", L"Enter Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 330, 150, 20, hWnd, NULL, NULL, NULL);
-	passLine1 = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 250, 330, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"static", L"Confirm Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 355, 150, 20, hWnd, NULL, NULL, NULL);
-	passConfLine1 = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 250, 355, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 330, 100, 50, hWnd, (HMENU)onDriveProcessClicked, NULL, NULL);
+	CreateWindow(L"static", L"Drive Letter: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 160, 50, 20, hWnd, NULL, NULL, NULL);
+	GroupBox = CreateWindow(WC_COMBOBOX, L"", WS_VISIBLE | WS_CHILD | CBS_DROPDOWNLIST | CBS_DROPDOWN | CBS_HASSTRINGS | WS_VSCROLL, 150, 160, 50, 200, hWnd,NULL,NULL, NULL);
+	CreateWindow(L"Button", L"Refresh", WS_VISIBLE | WS_CHILD, 220, 160, 100, 20,hWnd,(HMENU)onRefreshClicked, NULL, NULL);
+	CreateWindow(L"button", L"Select all docx files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 160, 150, 20, hWnd, (HMENU)ondocxSelect, NULL, NULL);
+	CreateWindow(L"button", L"Select all xlsx files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 185, 150, 20, hWnd, (HMENU)onxlsxSelect, NULL, NULL);
+	CreateWindow(L"button", L"Select all txt files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 500, 160, 150, 20, hWnd, (HMENU)ontxtSelect, NULL, NULL);
+	CreateWindow(L"button", L"Select all pst files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 500, 185, 150, 20, hWnd, (HMENU)onpstSelect, NULL, NULL);
+	CreateWindow(L"button", L"Select all dwg files", BS_AUTOCHECKBOX | WS_TABSTOP | WS_VISIBLE | WS_CHILD, 350, 210, 150, 20, hWnd, (HMENU)ondwgSelect, NULL, NULL);
+	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 500, 210, 150, 20, hWnd, (HMENU)onDriveProcessClicked, NULL, NULL);
 
 }
 
@@ -348,6 +359,23 @@ void singleFileProcess(LPWSTR fileName)
 	else {
 		Decode(fileName);
 	}
+}
+
+void LoadFile(HWND hWnd)
+{
+	
+	
+	try {
+		if (GetOpenFileName(&ofn) == TRUE) {
+			setFileName(filename);
+			SendMessage(hLineEdit, WM_SETTEXT, (WPARAM)0, (LPARAM)_c_txt);
+		}
+
+	}
+	catch (LPCWSTR e) {
+		MessageBox(0, e, L"ERROR", 0);
+	}
+	
 }
 
 

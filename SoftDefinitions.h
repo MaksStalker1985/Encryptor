@@ -34,7 +34,7 @@ HWND passLine1;
 HWND passConfLine1;
 HANDLE HFileSearchHandle;
 WIN32_FIND_DATA FileFindData;
-
+OPENFILENAME ofn;
 
 volatile bool _b_docx_selected = false;
 volatile bool _b_xlsx_selected = false;
@@ -42,14 +42,19 @@ volatile bool _b_txt_selected = false;
 volatile bool _b_dwg_selected = false;
 volatile bool _b_pst_selected = false;
 volatile bool _b_type = false;
+wchar_t filename[MAX_PATH] = {0};
 
-void initFileHandler();
+void initFileHandler(HWND hWnd);
 DWORD WINAPI SearchEngine(LPVOID lpParameter);
 LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam);
 WNDCLASS MainWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON Icon, LPCWSTR Name, WNDPROC Procedure);
 DWORD WINAPI EncodeThread(LPVOID lpParameter);
 DWORD WINAPI DecodeThread(LPVOID lpParameter);
+void setFileName(wchar_t* p);
 
+
+
+void setOpenFileParams(HWND hWnd);
 volatile WCHAR strText[255];
 void MainWindowAddMenus(HWND hWnd);
 void MainWidowDrawWidgets(HWND hWnd);
@@ -58,7 +63,7 @@ void DrawDriveList(HWND hWnd);
 void SearchFiles(HWND hWnd,LPWSTR path);
 void refreshDiskLabels();
 void singleFileProcess(LPWSTR fileName);
-void driveProcess();
+void LoadFile(HWND hWnd);
 
 bool Encode(LPWSTR fileName);
 bool Decode(LPWSTR fileName);
