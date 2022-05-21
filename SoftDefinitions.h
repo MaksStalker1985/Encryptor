@@ -1,7 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 #include "blowfish.h"
+#include <malloc.h>
+#include <ios>
+#include <fstream>
 
 #define OnSettingsClicked		1
 #define OnHelpMenuClicked		2
@@ -18,20 +23,18 @@
 #define ontxtSelect				13
 #define ondwgSelect				14
 #define	onpstSelect				15
+#define CRIPT_KEY "115792089237316195423570985008687907853269984665640564039457583884239776304168"
 
+#define SIZE_BLOCK (1<<20)
 HWND GroupBox;
 HWND hLineEdit;
 HWND passLine;
 HWND passConfLine;
 HWND passLine1;
 HWND passConfLine1;
-
 HANDLE HFileSearchHandle;
 WIN32_FIND_DATA FileFindData;
-HANDLE ReadThread;
-int idx;
 
-std::string value;
 
 volatile bool _b_docx_selected = false;
 volatile bool _b_xlsx_selected = false;
@@ -40,40 +43,30 @@ volatile bool _b_dwg_selected = false;
 volatile bool _b_pst_selected = false;
 volatile bool _b_type = false;
 
-int searchMaskQuantities = 0;
-
-std::string txtMask = "txt";
-std::string pstMask = "pst";
-std::string xlsxMask = "xlsx";
-std::string docxMask = "docs";
-std::string dwgMask = "dwg";
-
-std::vector<std::wstring> maskVector;
-
 void initFileHandler();
 DWORD WINAPI SearchEngine(LPVOID lpParameter);
 LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM lparam);
 WNDCLASS MainWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON Icon, LPCWSTR Name, WNDPROC Procedure);
+DWORD WINAPI EncodeThread(LPVOID lpParameter);
+DWORD WINAPI DecodeThread(LPVOID lpParameter);
 
-volatile TCHAR strText[255];
+volatile WCHAR strText[255];
 void MainWindowAddMenus(HWND hWnd);
 void MainWidowDrawWidgets(HWND hWnd);
 void DrawSingleFileList(HWND hWnd);
 void DrawDriveList(HWND hWnd);
-void SearchFiles();
+void SearchFiles(HWND hWnd,LPWSTR path);
 void refreshDiskLabels();
-void singleFileProcess();
+void singleFileProcess(LPWSTR fileName);
 void driveProcess();
-void AddMask(std::string mask);
-void RemoveMask(std::string mask);
 
-
+bool Encode(LPWSTR fileName);
+bool Decode(LPWSTR fileName);
 bool SetDocx();
 bool SetXlsx();
 bool SetTxt();
 bool SetPst();
 bool setDwg();
-bool type = false;
 
 enum FileType {
 	DocX = 1,
@@ -86,3 +79,13 @@ enum Type {
 	EncrypionType = 0,
 	DecryptionType
 };
+
+volatile WCHAR _c_txt[MAX_PATH];
+volatile int txt = 0;
+volatile int docx = 0;
+volatile int xlsx = 0;
+volatile int dwg = 0;
+volatile int pst = 0;
+volatile int idx = 0;
+
+volatile std::string value;

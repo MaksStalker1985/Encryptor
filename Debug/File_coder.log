@@ -1,0 +1,26 @@
+﻿  Source.cpp
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(286,13): warning C4244: инициализация: преобразование "std::streamoff" в "int", возможна потеря данных
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(295,9): warning C4101: result: неиспользованная локальная переменная
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\include\xstring(2603,27): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
+          with
+          [
+              _Elem=char
+          ]
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(203): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(203): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+E:\Projects\Freelancer\PCBTester\Encryptor\Source.cpp(119): warning C4715: SoftMainProcedure: значение возвращается не при всех путях выполнения
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: void __thiscall Blowfish::SetKey(unsigned char const *,int)" (?SetKey@Blowfish@@QAEXPBEH@Z) в функции "bool __cdecl Encode(wchar_t *)" (?Encode@@YA_NPA_W@Z).
+Source.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: void __thiscall Blowfish::Encrypt(unsigned char *,unsigned char const *,int)const " (?Encrypt@Blowfish@@QBEXPAEPBEH@Z) в функции "bool __cdecl Encode(wchar_t *)" (?Encode@@YA_NPA_W@Z).
+E:\Projects\Freelancer\PCBTester\Encryptor\Debug\File_coder.exe : fatal error LNK1120: неразрешенных внешних элементов: 2

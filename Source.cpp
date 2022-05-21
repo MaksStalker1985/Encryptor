@@ -5,8 +5,6 @@
 #include <CommCtrl.h>
 #include <thread>
 
-
-
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInt, LPSTR args, int nCmdShow) {
 	initFileHandler();
 	WNDCLASS SoftwareMainClass = MainWindowClass((HBRUSH)COLOR_WINDOW,
@@ -40,6 +38,19 @@ WNDCLASS MainWindowClass(HBRUSH BGColor, HCURSOR Cursor, HINSTANCE hInst, HICON 
 	return MWC;
 }
 
+DWORD WINAPI EncodeThread(LPVOID lpParameter)
+{
+	Encode((LPWSTR)_c_txt);
+	MessageBox(0, L"Finish Encrypting", L"INFO", MB_OK | MB_ICONINFORMATION);
+	ExitThread(0);
+}
+
+DWORD WINAPI DecodeThread(LPVOID lpParameter)
+{
+	Decode((LPWSTR)_c_txt);
+	MessageBox(0, L"Finish Decrypting", L"INFO", MB_OK | MB_ICONINFORMATION);
+	ExitThread(0);
+}
 
 void initFileHandler()
 {
@@ -64,43 +75,103 @@ LRESULT CALLBACK SoftMainProcedure(HWND hWnd, UINT uMsg, WPARAM wparam, LPARAM l
 			PostQuitMessage(0);
 			break;
 		case onEncryptTypeClicked:
-			_b_type = false;
-		case OnDecryptTypeClicked:
 			_b_type = true;
+			break;
+		case OnDecryptTypeClicked:
+			_b_type = false;
 			break;
 		case ondocxSelect:
 			_b_docx_selected = SetDocx();
-			
 			break;
 		case onxlsxSelect:
 			_b_xlsx_selected = SetXlsx();
-	
 			break;
 		case onpstSelect:
 			_b_pst_selected = SetPst();
-			
 			break;
 		case ondwgSelect:
 			_b_dwg_selected = setDwg();
-		
 			break;
 		case ontxtSelect:
 			_b_txt_selected = SetTxt();
-		
 			break;
 		case onRefreshClicked:
 			refreshDiskLabels();
 			break;
-
 		case onSingleProcessClicked:
-			singleFileProcess();
-			break;
-		case onDriveProcessClicked:
-			if (searchMaskQuantities == 0) {
-				MessageBoxA(hWnd, "No search mask selected", "File Coder", MB_OK);
+			GetWindowTextW(hLineEdit, (LPWSTR)_c_txt, MAX_PATH);
+			if (_b_type) {
+				HANDLE ReadThread = CreateThread(NULL, 0, EncodeThread, NULL, 0, 0);
+				CloseHandle(ReadThread);
 			}
 			else {
-				driveProcess();
+				HANDLE ReadThread = CreateThread(NULL, 0, DecodeThread, NULL, 0, 0);
+				CloseHandle(ReadThread);
+			}	
+			break;
+		case onDriveProcessClicked:
+			if (_b_type) {
+				if (!_b_docx_selected && !_b_dwg_selected && !_b_pst_selected && !_b_txt_selected && !_b_xlsx_selected) {
+					MessageBoxA(hWnd, "No search mask selected", "File Coder", MB_OK);
+				}
+				else {
+					try {
+						txt = 0; pst = 0; dwg = 0; xlsx = 0; docx = 0;
+						std::string message = "Finish Encrypting all ";
+						if (_b_docx_selected) {
+							if (_b_dwg_selected && _b_pst_selected && _b_txt_selected && _b_xlsx_selected) {
+								message.append("DOCX, ");
+							}
+							else {
+								message.append("DOCX ");
+							}
+						}
+						if (_b_xlsx_selected) {
+							if (_b_dwg_selected && _b_pst_selected && _b_txt_selected && _b_docx_selected) {
+								message.append("XLSX, ");
+							}
+							else {
+								message.append("XLSX ");
+							}
+						}
+						if (_b_txt_selected) {
+							if (_b_dwg_selected && _b_pst_selected && _b_docx_selected && _b_xlsx_selected) {
+								message.append("TXT, ");
+							}
+							else {
+								message.append("TXT ");
+							}
+						}
+						if (_b_pst_selected) {
+							if (_b_dwg_selected && _b_docx_selected && _b_txt_selected && _b_xlsx_selected) {
+								message.append("PST, ");
+							}
+							else {
+								message.append("PST ");
+							}
+						}
+						if (_b_dwg_selected) {
+							if (_b_docx_selected && _b_pst_selected && _b_txt_selected && _b_xlsx_selected) {
+								message.append("DWG, ");
+							}
+							else {
+								message.append("DWG ");
+							}
+						}
+						message.append("files");
+						HANDLE ReadThread = CreateThread(NULL, 0, SearchEngine, NULL, 0, 0);
+						CloseHandle(ReadThread);
+						MessageBoxA(0, message.c_str(), "INFO", MB_OK | MB_ICONINFORMATION);
+					}
+					catch (int e) {
+
+					}
+				}
+			}
+			else {
+				HANDLE ReadThread = CreateThread(NULL, 0, SearchEngine, NULL, 0, 0);
+				CloseHandle(ReadThread);
+				MessageBox(0, L"Finish Decrypting all *.encr files", L"INFO", MB_OK | MB_ICONINFORMATION);
 			}
 			break;
 		default: break;
@@ -158,7 +229,7 @@ void DrawSingleFileList(HWND hWnd) {
 	passLine = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD |WS_BORDER|ES_PASSWORD, 250, 130, 300, 20, hWnd, NULL, NULL, NULL);
 	CreateWindow(L"static", L"Confirm Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 155, 150, 20, hWnd, NULL, NULL, NULL);
 	passConfLine = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD|WS_BORDER | ES_PASSWORD, 250, 155, 300, 20, hWnd, NULL, NULL, NULL);
-	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 130, 100, 50, hWnd, NULL, NULL, NULL);
+	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 130, 100, 50, hWnd,(HMENU)onSingleProcessClicked, NULL, NULL);
 }
 
 void DrawDriveList(HWND hWnd) {
@@ -178,10 +249,76 @@ void DrawDriveList(HWND hWnd) {
 	CreateWindow(L"static", L"Confirm Passsword: ", WS_VISIBLE | WS_CHILD | ES_RIGHT, 80, 355, 150, 20, hWnd, NULL, NULL, NULL);
 	passConfLine1 = CreateWindow(L"edit", L"", WS_VISIBLE | WS_CHILD | WS_BORDER | ES_PASSWORD, 250, 355, 300, 20, hWnd, NULL, NULL, NULL);
 	CreateWindow(L"button", L"Start process", WS_VISIBLE | WS_CHILD, 600, 330, 100, 50, hWnd, (HMENU)onDriveProcessClicked, NULL, NULL);
+
 }
 
-void SearchFiles()
+void SearchFiles(HWND hWnd, LPWSTR path)
 {
+	WIN32_FIND_DATA wfd = { 0 };
+	SetCurrentDirectory(path);
+	HANDLE search = FindFirstFile(L"*", &wfd);
+	if (search == INVALID_HANDLE_VALUE) {
+		return ;
+	}
+	do {
+		LPWSTR strTmp = (LPWSTR)calloc(MAX_PATH + 1, sizeof(WCHAR));
+		GetCurrentDirectory(MAX_PATH, strTmp);
+		wcscat_s(strTmp, MAX_PATH, L"\\");
+		wcscat_s(strTmp, MAX_PATH, wfd.cFileName);
+		LPWSTR strTmp_ = (LPWSTR)calloc(wcslen(strTmp) + 1, sizeof(WCHAR));
+		wcscpy_s(strTmp_, wcslen(strTmp) + 1, strTmp);
+		if (wcscmp(wfd.cFileName, L".") && wcscmp(wfd.cFileName, L"..")) {
+			wcscat_s(strTmp, MAX_PATH, L"\t\t\t");
+			if (((wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) && (!(wfd.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT))) {
+				SearchFiles(hWnd, strTmp_);
+				SetCurrentDirectory(path);
+			}
+			else {
+				std::wstring ws = wfd.cFileName;
+				std::string tmpString(ws.begin(),ws.end());
+				bool tmpBool = false;
+				if (_b_type) {
+					if (tmpString.find(".encr") == std::string::npos) {
+						if (_b_docx_selected && (tmpString.find(".docx") != std::string::npos)) {
+							tmpBool = true;
+							Encode(wfd.cFileName);
+							docx++;
+						}
+						else if (_b_xlsx_selected && !tmpBool && (tmpString.find(".xlsx") != std::string::npos)) {
+							tmpBool = true;
+							Encode(wfd.cFileName);
+							xlsx++;
+						}
+						else if (_b_txt_selected && !tmpBool && (tmpString.find(".txt") != std::string::npos)) {
+							tmpBool = true;
+							Encode(wfd.cFileName);
+							txt++;
+						}
+						else if (_b_pst_selected && !tmpBool && (tmpString.find(".pst") != std::string::npos)) {
+							tmpBool = true;
+							Encode(wfd.cFileName);
+							pst++;
+						}
+						else if ((tmpString.find(".dwg") != std::string::npos) && _b_dwg_selected && !tmpBool) {
+							tmpBool = true;
+							Encode(wfd.cFileName);
+							dwg++;
+						}
+						tmpBool = false;
+					}
+				}
+				else if(!_b_type) {
+					if ((tmpString.find(".encr") != std::string::npos)) {
+						Decode(wfd.cFileName);
+					}
+				}
+			}
+
+		}
+
+
+	} while (FindNextFile(search,&wfd));
+
 
 }
 
@@ -203,46 +340,88 @@ void refreshDiskLabels()
 	SendMessage(GroupBox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
 }
 
-void singleFileProcess()
+void singleFileProcess(LPWSTR fileName)
 {
-	
-}
-
-void driveProcess()
-{
-	ReadThread = CreateThread(NULL, 0, SearchEngine, 0, 0, 0);
-}
-
-void AddMask(std::string mask)
-{
-	searchMaskQuantities++;
-	if (searchMaskQuantities > 5) {
-		searchMaskQuantities = 5;
+	if (_b_type) {
+		Encode(fileName);
 	}
-	try {
-
-	}
-
-}
-
-void RemoveMask(std::string mask)
-{
-	searchMaskQuantities--;
-	if (searchMaskQuantities <0) {
-		searchMaskQuantities = 0;
+	else {
+		Decode(fileName);
 	}
 }
+
+
+bool Encode(LPWSTR fileName)
+{
+	int length;
+	DWORD ByteRet;
+	Blowfish blowfish;
+	unsigned char key[] = CRIPT_KEY;
+	blowfish.SetKey(key, sizeof(key));
+	std::wstring ws (fileName);
+	std::string _s_fileName(ws.begin(), ws.end());
+	std::string tmpString(ws.begin(), ws.end());
+	tmpString.append(".encr");
+	std::ifstream inFile(_s_fileName, std::ios::binary);
+	std::ofstream outFile(tmpString, std::ios::binary);
+	inFile.seekg(0, std::ios::end);
+	length = inFile.tellg();
+	char* buf = new char[length + 1]; 
+	inFile.seekg(0, std::ios::beg);
+	inFile.read(buf, length);
+	char* outBuf = new char[length + 1];
+	blowfish.Encrypt((unsigned char*)outBuf, (unsigned char*)buf, length);
+	outFile.write(outBuf, length);
+	inFile.close();
+	outFile.close();
+	remove(_s_fileName.c_str());
+	delete[] buf;
+	delete[] outBuf;
+	return true;
+}
+
+bool Decode(LPWSTR fileName)
+{
+	int length;
+	DWORD ByteRet;
+	Blowfish blowfish;
+	unsigned char key[] = CRIPT_KEY;
+	blowfish.SetKey(key, sizeof(key));
+	std::wstring ws(fileName);
+	std::string _s_fileName(ws.begin(), ws.end());
+	std::string tmpString(ws.begin(), ws.end());
+	int index;
+	index = tmpString.find(".encr");
+	tmpString.erase(index);
+	std::ifstream inFile(_s_fileName, std::ios::binary);
+	std::ofstream outFile(tmpString, std::ios::binary);
+	inFile.seekg(0, std::ios::end);
+	length = inFile.tellg();
+	char* buf = new char[length + 1];
+	inFile.seekg(0, std::ios::beg);
+	inFile.read(buf, length);
+	char* outBuf = new char[length + 1];
+	blowfish.Decrypt((unsigned char*)outBuf, (unsigned char*)buf, length);
+	outFile.write(outBuf, length);
+	inFile.close();
+	outFile.close();
+	remove(_s_fileName.c_str());
+	delete[] buf;
+	delete[] outBuf;
+	return true;
+}
+
+
+
 
 
 bool SetDocx()
 {
 	if (_b_docx_selected) {
-		RemoveMask(docxMask);
 		return false;
 	}
 	else
 	{
-		AddMask(docxMask);
 		return true;
 	}
 	
@@ -290,12 +469,6 @@ bool setDwg()
 
 
 DWORD WINAPI SearchEngine(LPVOID lpParameter) {
-	CBlowFish blowFish();
-	LPCWCH param = (LPCWCH)lpParameter;
-	LPWSTR tmp = (LPWSTR)param;
-	tmp += '\\';
-	
-	wprintf(tmp);
-	return 0;
+	SearchFiles(NULL, (LPWSTR)strText);
+	ExitThread(0);
 }
-
